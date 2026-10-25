@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banja - Inner Circle Birthday Calendar</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        /* --- LAVENDER PINK PASTEL THEME --- */
+        :root {
+            --lavender-bg: #F4F3FA;
+            --lavender-card: #E6E6FA;
+            --pink-accent: #FFC0CB;
+            --pink-dark: #E08594;
+            --text-dark: #3A3543;
+            --text-muted: #6B6375;
+            --white: #FFFFFF;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--lavender-bg);
+            color: var(--text-dark);
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            background-color: var(--white);
+            border-radius: 24px;
+            box-shadow: 0 8px 24px rgba(107, 99, 117, 0.08);
+            overflow: hidden;
+            padding-bottom: 30px;
+        }
+
+        /* --- HEADER & LOGO --- */
+        .app-header {
+            background-color: var(--lavender-card);
+            padding: 24px;
+            text-align: center;
+            border-bottom: 3px solid var(--pink-accent);
+        }
+
+        .logo-placeholder {
+            width: 110px;
+            height: 110px;
+            margin: 0 auto 12px;
+            border-radius: 50%;
+            background-color: var(--white);
+            border: 2px solid var(--pink-accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .logo-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .app-header h1 {
+            font-size: 26px;
+            color: var(--text-dark);
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+        .app-header p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* --- FORMS & PANELS --- */
+        .section-panel {
+            padding: 20px;
+            border-bottom: 1px solid #ECE9F2;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 14px;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        input[type="text"], input[type="date"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #DFDAE7;
+            border-radius: 12px;
+            font-size: 14px;
+            background-color: var(--lavender-bg);
+            color: var(--text-dark);
+            outline: none;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--pink-dark);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn:active {
+            opacity: 0.8;
+        }
+
+        .btn-primary {
+            background-color: var(--pink-accent);
+            color: var(--text-dark);
+        }
+
+        .btn-secondary {
+            background-color: var(--lavender-card);
+            color: var(--text-dark);
+            margin-top: 8px;
+        }
+
+        /* --- BIRTHDAY LIST DISPLAY --- */
+        .birthday-list {
+            margin-top: 10px;
+        }
+
+        .birthday-card {
+            background-color: var(--lavender-bg);
+            border-left: 4px solid var(--pink-accent);
+            padding: 14px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .birthday-card.today {
+            background-color: #FFF0F2;
+            border-left-color: var(--pink-dark);
+        }
+
+        .info-name {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .info-date {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .countdown-badge {
+            background-color: var(--white);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            border: 1px solid #E3DFEA;
+        }
+
+        .today-badge {
+            background-color: var(--pink-dark);
+            color: var(--white);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.8; }
+            50% { opacity: 1; }
+            100% { opacity: 0.8; }
+        }
+
+        .btn-delete {
+            background: none;
+            border: none;
+            color: #C07080;
+            font-size: 16px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .no-data {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 14px;
+            padding: 20px 0;
+        }
+
+        .badge-count {
+            background-color: var(--pink-accent);
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- --- APPLICATION HEADER --- -->
+        <header class="app-header">
+            <div class="logo-placeholder">
+                <img src="logo.png" alt="Banja Family Logo" onerror="this.style.display='none'; this.parentNode.innerText='🎂';">
+            </div>
+            <h1>BANJA</h1>
+            <p>Our Private Inner Circle Calendar</p>
+        </header>
+
+        <!-- --- USER LOCAL PROFILE EDIT --- -->
+        <div class="section-panel">
+            <div class="section-title">👤 My Profile <span style="font-size:11px; color:var(--text-muted);">(Saved On This Phone)</span></div>
+            <div class="form-group">
+                <input type="text" id="profileName" placeholder="Enter your first name" oninput="saveProfile()">
+            </div>
+        </div>
+
+        <!-- --- ADD BIRTHDAY FORM --- -->
+        <div class="section-panel">
+            <div class="section-title">➕ Add New Birthday</div>
+            <div class="form-group">
+                <!-- Changed to strictly request the first name only -->
+                <input type="text" id="newName" placeholder="First Name">
+            </div>
+            <div class="form-group">
+                <input type="date" id="newDate">
+            </div>
+            <button class="btn btn-primary" onclick="addBirthday()">Save to Calendar</button>
+        </div>
+
+        <!-- --- INNER CIRCLE CALENDAR DISPLAY --- -->
+        <div class="section-panel">
+            <div class="section-title">📅 Birthday Timeline <span id="birthdayCount" class="badge-count">0</span></div>
+            <div id="birthdayListContainer" class="birthday-list">
+                <!-- Dynamic cards render via pure JavaScript here -->
+            </div>
+        </div>
+
+        <!-- --- PRIVATE INNER CIRCLE SYNC HUB --- -->
+        <div class="section-panel" style="border-bottom: none;">
+            <div class="section-title">🔒 Inner Circle Secure Share</div>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;">
+                To update your family's phones without standard servers, copy your Pass code and text it to them directly.
+            </p>
+            <div class="form-group">
+                <textarea id="syncDataBox" rows="3" placeholder="Inner Circle Data Pass Code appears here or paste family pass code here..." style="resize: none; font-family: monospace; font-size: 11px;"></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="exportCirclePass()">Generate Circle Pass Code</button>
+            <button class="btn btn-secondary" onclick="importCirclePass()">Import Family Pass Code</button>
+        </div>
+    </div>
+
+    <!-- --- APPLICATION ENGINE (VANILLA JAVASCRIPT) --- -->
+    <script>
+        let birthdays = [];
+
+        window.onload = function() {
+            if (localStorage.getItem('banja_birthdays')) {
+                try {
+                    birthdays = JSON.parse(localStorage.getItem('banja_birthdays'));
+                } catch(e) {
+                    birthdays = [];
+                }
+            }
+            if (localStorage.getItem('banja_profile_name')) {
+                document.getElementById('profileName').value = localStorage.getItem('banja_profile_name');
+            }
+            renderTimeline();
+        };
+
+        function saveProfile() {
+            const nameValue = document.getElementById('profileName').value;
+            localStorage.setItem('banja_profile_name', nameValue);
+        }
+
+        function calculateDaysRemaining(targetDateStr) {
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            
+            const birthDate = new Date(targetDateStr);
+            const currentYear = today.getFullYear();
+            
+            const nextBirthday = new Date(currentYear, birthDate.getMonth(), birthDate.getDate());
+            
+            if (nextBirthday < today) {
+Use code with caution.
+nextBirthday.setFullYear(currentYear + 1);
+}
+const msPerDay = 24 * 60 * 60 * 1000;
+return Math.ceil((nextBirthday.getTime() - today.getTime()) / msPerDay);
+}
+function addBirthday() {
+const nameInput = document.getElementById('newName');
+const dateInput = document.getElementById('newDate');
+if (!nameInput.value.trim() || !dateInput.value) {
+alert("Please fill out both the First Name and Date fields.");
+return;
+}
+const item = {
+id: 'id_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+name: nameInput.value.trim(),
+date: dateInput.value
+};
+birthdays.push(item);
+saveDataToDisk();
+renderTimeline();
+nameInput.value = '';
+dateInput.value = '';
+}
+function deleteBirthday(id) {
+birthdays = birthdays.filter(item => item.id !== id);
+saveDataToDisk();
+renderTimeline();
+}
+function saveDataToDisk() {
+localStorage.setItem('banja_birthdays', JSON.stringify(birthdays));
+}
+function renderTimeline() {
+const container = document.getElementById('birthdayListContainer');
+const countBadge = document.getElementById('birthdayCount');
+container.innerHTML = '';
+countBadge.innerText = birthdays.length;
+if (birthdays.length === 0) {
+container.innerHTML = 'No birthdays added yet. Use the fields above to start your Inner Circle list.';
+return;
+}
+const mappedList = birthdays.map(item => {
+return {
+...item,
+daysLeft: calculateDaysRemaining(item.date)
+};
+});
+mappedList.sort((a, b) => a.daysLeft - b.daysLeft);
+mappedList.forEach(item => {
+const card = document.createElement('div');
+card.className = 'birthday-card';
+const dateObj = new Date(item.date);
+const formatOptions = { month: 'long', day: 'numeric' };
+const formattedDate = dateObj.toLocaleDateString('en-US', formatOptions);
+let badgeHtml = '';
+if (item.daysLeft === 0 || item.daysLeft === 365) {
+card.className += ' today';
+badgeHtml = <span class="countdown-badge today-badge">🎁 Today!</span>;
+} else {
+badgeHtml = <span class="countdown-badge">In ${item.daysLeft} days</span>;
+}
+card.innerHTML = <div> <div class="info-name">${item.name}</div> <div class="info-date">${formattedDate}</div> </div> <div style="display: flex; align-items: center;"> ${badgeHtml} <button class="btn-delete" onclick="deleteBirthday('${item.id}')" title="Remove">✕</button> </div>;
+container.appendChild(card);
+});
+}
+function exportCirclePass() {
+if (birthdays.length === 0) {
+alert("Your birthday calendar is empty. Add a few birthdays before generating an Inner Circle Pass.");
+return;
+}
+const rawString = JSON.stringify(birthdays);
+const encodedData = btoa(unescape(encodeURIComponent(rawString)));
+const dataBox = document.getElementById('syncDataBox');
+dataBox.value = encodedData;
+dataBox.select();
+alert("Inner Circle Pass code generated and copied! Send it directly to your family members.");
+}
+// P2P Data Import - Decodes external payload and overrides current local state safely
+function importCirclePass() {
+const dataBox = document.getElementById('syncDataBox');
+const code = dataBox.value.trim();
+if (!code) {
+alert("Please paste a valid Inner Circle Pass code into the text area box first.");
+return;
+}
+try {
+const decodedString = decodeURIComponent(escape(atob(code)));
+const importedList = JSON.parse(decodedString);
+if (Array.isArray(importedList)) {
+if (confirm(Valid Inner Circle Pass detected! This will sync ${importedList.length} birthdays into your local app. Proceed?)) {
+birthdays = importedList;
+saveDataToDisk();
+renderTimeline();
+dataBox.value = '';
+alert("Banja Inner Circle successfully updated!");
+}
+} else {
+alert("Invalid pass signature. Please ensure the full code was pasted correctly.");
+}
+} catch(err) {
+alert("Could not process pass code. Make sure you received a genuine string output from another family member's Banja application.");
+}
+}
